@@ -1,0 +1,127 @@
+//{{NO_DEPENDENCIES}}
+// Microsoft Visual C++ generated include file.
+// Used by Notefall.rc
+//
+#define IDC_MYICON                      2
+#define IDS_APP_TITLE                   103
+#define IDD_ABOUTBOX                    103
+#define IDM_ABOUT                       104
+#define IDS_COMPANY                     104
+#define IDS_REGKEYSOFT                  105
+#define IDS_REGKEYRECENT                106
+#define IDI_NOTEFALL                    107
+#define IDS_STBARPART1                  107
+#define IDI_SMALL                       108
+#define IDS_OPENFILETITLE               108
+#define IDC_NOTEFALL                    109
+#define IDS_SAVEASTITLE                 110
+#define IDS_OPENSAVEFILTER              111
+#define IDS_STATUSMODIFIED              112
+#define IDS_STATUSNOTMOD                113
+#define IDS_RECENTMENU                  114
+#define IDS_STBARPART2                  115
+#define IDS_STBARPART3                  116
+#define IDS_CLEARECENT                  117
+#define IDS_NEWTABTITLE                 118
+#define IDS_REGKEYFIND                  119
+#define IDS_REGKEYREPLACE               120
+#define IDD_DIALOGFIND                  129
+#define IDR_STBARMENU                   130
+#define IDD_DIALOGREPLACE               130
+#define IDR_EDITBOXMENU                 131
+#define PNG_ADD                         132
+#define PNG_ADDHOVER                    133
+#define PNG_BCKG                        134
+#define PNG_CENTER                      135
+#define PNG_CLOSE                       136
+#define PNG_CLOSEHOVER                  137
+#define PNG_CENTERIN                    138
+#define PNG_LEFTIN                      139
+#define PNG_RIGHTIN                     140
+#define PNG_RIGHTINNODIV                141
+#define PNG_LEFT                        142
+#define PNG_RIGHT                       143
+#define PNG_CLOSEBTN                    147
+#define PNG_CLOSEHIGHLIGHT              148
+#define PNG_MAXIMIZE                    149
+#define PNG_MINIMIZE                    150
+#define PNG_RESTORE                     151
+#define PNG_CENTERINNF                  152
+#define PNG_LEFTINNF                    153
+#define PNG_RIGHTINNODIVNF              154
+#define PNG_RIGHTINNF                   155
+#define PNG_OPENFILE                    158
+#define BMP_OPENFILE                    159
+#define PNG_COPY                        181
+#define PNG_CUT                         182
+#define PNG_FIND                        183
+#define PNG_FINDNEXT                    184
+#define PNG_NEWFILE                     185
+#define PNG_PASTE                       187
+#define PNG_PRINT                       188
+#define PNG_RECENT                      189
+#define PNG_REPLACE                     190
+#define PNG_SAVEALL                     191
+#define PNG_SAVEFILE                    192
+#define PNG_SAVEFILEAS                  193
+#define PNG_SETTINGS                    194
+#define PNG_TABICON                     195
+#define PNG_UNDO                        196
+#define IDC_CHECK1                      1001
+#define IDC_CHECKWORDS                  1001
+#define IDC_CHECK2                      1002
+#define IDC_CHECKCASE                   1002
+#define IDC_STATUSBAR                   1003
+#define IDC_CHECKHEX                    1003
+#define IDC_COMBOREPLACE                1004
+#define IDC_COMBOFIND                   1005
+#define ID_EDITBOXWND                   32786
+#define IDM_RECENT1                     32787
+#define IDM_RECENT2                     32788
+#define IDM_RECENT3                     32789
+#define IDM_RECENT4                     32790
+#define IDM_RECENT5                     32791
+#define IDM_RECENT6                     32792
+#define IDM_RECENT7                     32793
+#define IDM_RECENT8                     32794
+#define IDM_RECENT9                     32795
+#define IDM_EDITFONT                    32796
+#define IDM_OPENFILE                    32797
+#define IDM_SAVEFILE                    32798
+#define IDM_SAVEFILEAS                  32799
+#define IDM_FIND                        32800
+#define IDS_FULLREGKEYFIND              32801
+#define IDS_FULLREGKEYRECENT            32802
+#define IDS_FULLREGKEYREPLACE           32803
+#define IDS_FULLREGKEY                  32808
+#define IDM_ZOOMIN                      32809
+#define IDM_ZOOMOUT                     32810
+#define IDM_FINDNEXT                    32814
+#define IDM_FINDNEXTBACK                32817
+#define ID_MENUITEM1                    32819
+#define ID_MENUITEM1_SUBITEM1           32820
+#define ID_MENUITEM1_DFDFDFDF           32821
+#define IDM_SELECTALL                   32828
+#define IDM_NEWFILE                     32832
+#define IDM_SAVEALL                     32833
+#define IDM_OPENRECENT                  32838
+#define IDM_REPLACE                     32839
+#define IDM_UNDO                        32840
+#define IDM_CUT                         32841
+#define IDM_COPY                        32842
+#define IDM_PASTE                       32843
+#define IDM_PRINTFILE                   32844
+#define IDM_SETTINGS                    32845
+#define IDC_STATIC                      -1
+
+// Next default values for new objects
+// 
+#ifdef APSTUDIO_INVOKED
+#ifndef APSTUDIO_READONLY_SYMBOLS
+#define _APS_NO_MFC                     1
+#define _APS_NEXT_RESOURCE_VALUE        197
+#define _APS_NEXT_COMMAND_VALUE         32852
+#define _APS_NEXT_CONTROL_VALUE         1006
+#define _APS_NEXT_SYMED_VALUE           112
+#endif
+#endif

@@ -1,0 +1,190 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="framework.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Notefall.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Registry.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Common.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SystemInfo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TabInfo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TabContent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TabsManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Application.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Notefall.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Common.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Registry.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TabContent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TabsManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Application.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TabInfo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Notefall.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="small.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Images\Caption\Add.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Images\Caption\AddHover.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Images\Caption\Background.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Images\Caption\Center.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Images\Caption\Close.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Images\Caption\CloseHover.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Images\Caption\InactiveCenter.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Images\Caption\InactiveLeft.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Images\Caption\InactiveRight.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Images\Caption\InactiveRightNoDivider.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Images\Caption\Left.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Images\Caption\Right.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Images\Caption\CloseBtn.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Images\Caption\CloseHighlight.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Images\Caption\InactiveCenterNoFocus.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Images\Caption\InactiveLeftNoFocus.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Images\Caption\InactiveRightNoDividerNoFocus.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Images\Caption\InactiveRightNoFocus.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Images\Mainmenu\Copy.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Images\Mainmenu\Cut.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Images\Mainmenu\Find.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Images\Mainmenu\FindNext.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Images\Mainmenu\NewFile.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Images\Mainmenu\OpenFile.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Images\Mainmenu\Paste.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Images\Mainmenu\Print.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Images\Mainmenu\Recent.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Images\Mainmenu\Replace.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Images\Mainmenu\SaveAll.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Images\Mainmenu\SaveFile.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Images\Mainmenu\SaveFileAs.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Images\Mainmenu\Settings.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Images\Mainmenu\TabIcon.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Images\Mainmenu\Undo.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Notefall.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
+</Project>

@@ -11,7 +11,6 @@
 #define IDS_REGKEYRECENT                106
 #define IDI_NOTEFALL                    107
 #define IDS_STBARPART1                  107
-#define IDI_SMALL                       108
 #define IDS_OPENFILETITLE               108
 #define IDC_NOTEFALL                    109
 #define IDS_SAVEASTITLE                 110
@@ -67,14 +66,24 @@
 #define PNG_SETTINGS                    194
 #define PNG_TABICON                     195
 #define PNG_UNDO                        196
+#define IDD_DIALOGSETTINGS              197
 #define IDC_CHECK1                      1001
 #define IDC_CHECKWORDS                  1001
+#define IDC_CHECKITALIC                 1001
 #define IDC_CHECK2                      1002
 #define IDC_CHECKCASE                   1002
+#define IDC_CHECKUNDERLINE              1002
 #define IDC_STATUSBAR                   1003
 #define IDC_CHECKHEX                    1003
+#define IDC_CHECKSTRIKEOUT              1003
 #define IDC_COMBOREPLACE                1004
+#define IDC_CHECKBOLD                   1004
 #define IDC_COMBOFIND                   1005
+#define IDC_CMBFONTNAME                 1006
+#define IDC_CMBFONTSIZE                 1007
+#define IDC_CMBCOLOUR                   1008
+#define IDC_BROWNFOX                    1010
+#define IDC_CMBCHARSET                  1011
 #define ID_EDITBOXWND                   32786
 #define IDM_RECENT1                     32787
 #define IDM_RECENT2                     32788
@@ -85,7 +94,6 @@
 #define IDM_RECENT7                     32793
 #define IDM_RECENT8                     32794
 #define IDM_RECENT9                     32795
-#define IDM_EDITFONT                    32796
 #define IDM_OPENFILE                    32797
 #define IDM_SAVEFILE                    32798
 #define IDM_SAVEFILEAS                  32799
@@ -119,9 +127,9 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NO_MFC                     1
-#define _APS_NEXT_RESOURCE_VALUE        197
+#define _APS_NEXT_RESOURCE_VALUE        198
 #define _APS_NEXT_COMMAND_VALUE         32852
-#define _APS_NEXT_CONTROL_VALUE         1006
+#define _APS_NEXT_CONTROL_VALUE         1013
 #define _APS_NEXT_SYMED_VALUE           112
 #endif
 #endif

@@ -155,6 +155,7 @@
     <ClInclude Include="Notefall.h" />
     <ClInclude Include="Registry.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="SettingsDlg.h" />
     <ClInclude Include="SystemInfo.h" />
     <ClInclude Include="TabInfo.h" />
     <ClInclude Include="TabsManager.h" />
@@ -166,6 +167,7 @@
     <ClCompile Include="Common.cpp" />
     <ClCompile Include="Notefall.cpp" />
     <ClCompile Include="Registry.cpp" />
+    <ClCompile Include="SettingsDlg.cpp" />
     <ClCompile Include="TabInfo.cpp" />
     <ClCompile Include="TabsManager.cpp" />
     <ClCompile Include="TabContent.cpp" />
@@ -209,7 +211,6 @@
     <Image Include="Images\Mainmenu\TabIcon.png" />
     <Image Include="Images\Mainmenu\Undo.png" />
     <Image Include="Notefall.ico" />
-    <Image Include="small.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

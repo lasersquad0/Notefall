@@ -134,6 +134,7 @@ LRESULT CALLBACK Application::WndProc(HWND hWnd, UINT message, WPARAM wParam, LP
 	//	case WM_ERASEBKGND: // disable Erase Background
 	//	return 0;
 
+		
 	case WM_CLOSE:
 		if (!FTabsMan.CloseAllTabs()) return 0; // stop closing 
 		DestroyWindow(hWnd);

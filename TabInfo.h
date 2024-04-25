@@ -17,6 +17,8 @@ public:
 
 	virtual bool IsVisible() = 0;
 	virtual void SetVisible(bool visible) = 0;
+	virtual void SetFocus() = 0;
+	virtual void SetFont(HFONT font) = 0;
 	virtual bool IsModified() = 0;
 	virtual void SetModified(bool modified) = 0;
 	virtual bool OpenFile() = 0;
@@ -56,6 +58,8 @@ public:
 	void SetTitle(const string_t& title) override;
 	bool IsVisible() override { return FContent.IsVisible(); }
 	void SetVisible(bool visible) override { FContent.SetVisible(visible); }
+	void SetFocus() override { FContent.SetFocus(); }
+	void SetFont(HFONT font) override { FContent.SetFont(font); }
 	bool IsModified() override { return FContent.IsModified(); }
 	void SetModified(bool modified) override { FContent.SetModified(modified); }
 	bool OpenFile() override { return FContent.OpenFile(); }

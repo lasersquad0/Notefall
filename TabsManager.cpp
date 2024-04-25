@@ -2,6 +2,8 @@
 #include "TabsManager.h"
 #include "Application.h"
 #include "Registry.h"
+#include "SettingsDlg.h"
+
 
 TabsManager::TabsManager(Application* parent)
 {
@@ -43,6 +45,37 @@ void TabsManager::Init(HWND mainWnd)
 	assert(FMouseHook != nullptr);
 }
 
+LOGFONT TabsManager::CreateFontForEdit()
+{
+	LOGFONT lf{};
+
+	TCHAR fname[] = _T("Consolas");
+	StringCchCopy(lf.lfFaceName, lstrlen(fname) + 1, fname);
+	lf.lfWeight = FW_NORMAL;
+	lf.lfHeight = 17;
+	lf.lfWidth = 0; // will be calculated by windows
+	//lf.lfQuality = CLEARTYPE_QUALITY;
+	lf.lfCharSet = 204;
+	lf.lfPitchAndFamily = 33;
+
+	return lf;
+
+	// Create the font, and then return its handle.  
+	//return CreateFont(lf.lfHeight, lf.lfWidth, lf.lfEscapement, lf.lfOrientation, lf.lfWeight,
+	//	lf.lfItalic, lf.lfUnderline, lf.lfStrikeOut, lf.lfCharSet, lf.lfOutPrecision,
+	//	lf.lfClipPrecision, lf.lfQuality, lf.lfPitchAndFamily, lf.lfFaceName);
+}
+
+HFONT TabsManager::CreateHFontForEdit()
+{
+	LOGFONT lf = CreateFontForEdit();
+	return CreateFontIndirect(&lf);
+
+	//return CreateFont(lf.lfHeight, lf.lfWidth, lf.lfEscapement, lf.lfOrientation, lf.lfWeight,
+	//	lf.lfItalic, lf.lfUnderline, lf.lfStrikeOut, lf.lfCharSet, lf.lfOutPrecision,
+	//	lf.lfClipPrecision, lf.lfQuality, lf.lfPitchAndFamily, lf.lfFaceName);
+}
+
 void TabsManager::InitTabsData()
 {
 	TabAddBtnSizeX = FImgMap[PNG_ADD]->GetWidth();
@@ -80,7 +113,7 @@ void TabsManager::InitTabsData()
 
 //	CloseThemeData(hTheme);
 
-	HTHEME theme = OpenThemeData(FMainWnd, _T("WINDOW"));
+	HTHEME theme = OpenThemeData(FMainWnd, VSCLASS_WINDOW); // _T("WINDOW")
 	assert(theme != nullptr);
 
 	MainMenuTextColor = GetThemeSysColor(theme, COLOR_MENUTEXT);
@@ -90,6 +123,24 @@ void TabsManager::InitTabsData()
 	MainMenuDisableTextColor = GetThemeSysColor(theme, COLOR_GRAYTEXT); //COLOR_GRAYTEXT
 
 	MainMenuBackgroundBrush = CreateSolidBrush(MainMenuBackgroundColor);
+
+	ActiveCaptionColor = GetThemeSysColor(theme, COLOR_HIGHLIGHT);
+	//InactiveCaptionColor = GetThemeSysColor(theme, COLOR_INACTIVECAPTION);
+	CaptionTextColor = GetThemeSysColor(theme, COLOR_CAPTIONTEXT);
+	//InactiveCaptionTextColor = GetThemeSysColor(theme, COLOR_INACTIVECAPTIONTEXT);
+
+	ComboItemTextColor = GetThemeSysColor(theme, COLOR_MENUTEXT);
+	ComboItemHighlightColor = GetThemeSysColor(theme, COLOR_HIGHLIGHT);
+	ComboItemNormalColor = GetThemeSysColor(theme, COLOR_WINDOW);
+	ComboItemDisabledColor = GetThemeSysColor(theme, COLOR_INACTIVECAPTIONTEXT);
+	
+	WindowColor = GetThemeSysColor(theme, COLOR_BTNFACE); // COLOR_WINDOW);
+	FontPreviewBrush = CreateSolidBrush(WindowColor);
+
+	//CaptionBackgroundBrush = CreateSolidBrush(ActiveCaptionColor);
+	
+	//LOGFONT lf{};
+	//HR_CHECK(GetThemeSysFont(theme, TMT_CAPTIONFONT, &lf));
 
 	HR_CHECK(CloseThemeData(theme));
 }
@@ -138,22 +189,22 @@ void TabsManager::InitMainMenu()
 	}
 }
 
-BOOL GetIconDimensions(HICON hico, SIZE* psiz)
-{
-	ICONINFO ii;
-	BOOL fResult = GetIconInfo(hico, &ii);
-	if (fResult) {
-		BITMAP bm;
-		fResult = GetObject(ii.hbmMask, sizeof(bm), &bm) == sizeof(bm);
-		if (fResult) {
-			psiz->cx = bm.bmWidth;
-			psiz->cy = ii.hbmColor ? bm.bmHeight : bm.bmHeight / 2;
-		}
-		if (ii.hbmMask)  DeleteObject(ii.hbmMask);
-		if (ii.hbmColor) DeleteObject(ii.hbmColor);
-	}
-	return fResult;
-}
+//BOOL GetIconDimensions(HICON hico, SIZE* psiz)
+//{
+//	ICONINFO ii;
+//	BOOL fResult = GetIconInfo(hico, &ii);
+//	if (fResult) {
+//		BITMAP bm;
+//		fResult = GetObject(ii.hbmMask, sizeof(bm), &bm) == sizeof(bm);
+//		if (fResult) {
+//			psiz->cx = bm.bmWidth;
+//			psiz->cy = ii.hbmColor ? bm.bmHeight : bm.bmHeight / 2;
+//		}
+//		if (ii.hbmMask)  DeleteObject(ii.hbmMask);
+//		if (ii.hbmColor) DeleteObject(ii.hbmColor);
+//	}
+//	return fResult;
+//}
 
 void TabsManager::LoadImages()
 {
@@ -323,7 +374,7 @@ bool TabsManager::CloseAllTabs()
 {
 	while (Tabs.size() > 0)
 	{
-		if (!CloseTab(Tabs.size() - 1)) return false;
+		if (!CloseTab((uint)Tabs.size() - 1u)) return false;
 	}
 
 	return true;
@@ -493,7 +544,10 @@ void TabsManager::DrawTabs(HDC hdc) // #CFDCEC
 		assert(gr != nullptr);
 
 		//gr->DrawImage(FImgMap[PNG_BCKG], 0, 0, TabsAreaWidth, TabTotalHeight);
-		
+		Gdiplus::Rect CaptRect(0,0, TabsAreaWidth, TabTotalHeight);
+		Gdiplus::SolidBrush CaptBrush(ActiveCaptionColor);
+		gr->FillRectangle(&CaptBrush, CaptRect);
+
 		POINT ptMouse;
 		BOOL_CHECK(GetCursorPos(&ptMouse));
 		BOOL_CHECK(ScreenToClient(FMainWnd, &ptMouse));
@@ -553,7 +607,7 @@ void TabsManager::DrawTabs(HDC hdc) // #CFDCEC
 			Gdiplus::Font gdifont(hdcPaint, &font);
 			
 			Gdiplus::Color color;
-			color.SetFromCOLORREF(SystemInfo::CaptionTextColor);
+			color.SetFromCOLORREF(CaptionTextColor);
 			Gdiplus::SolidBrush brush(color);
 			Gdiplus::RectF rc((Gdiplus::REAL)tab->TextRect.left, (Gdiplus::REAL)tab->TextRect.top, (Gdiplus::REAL)RECTW(tab->TextRect), (Gdiplus::REAL)RECTH(tab->TextRect));
 
@@ -632,7 +686,7 @@ void TabsManager::DrawTabs(HDC hdc) // #CFDCEC
 		//bitmap.GetHBITMAP(Gdiplus::Color::MakeARGB(255, 0xCF, 0xDC, 0xEC), &hbmp);
 		HBITMAP hbmOld = (HBITMAP)SelectObject(hdcPaint, hbmp);
 
-		//bool RES = TransparentBlt(hdc, 0, 0, TabsAreaWidth, TabTotalHeight, hdcPaint, 0, 0, TabsAreaWidth, TabTotalHeight, 0xCFDCEC);
+		//BOOL_CHECK(TransparentBlt(hdc, 0, 0, TabsAreaWidth, TabTotalHeight, hdcPaint, 0, 0, TabsAreaWidth, TabTotalHeight, 0xCFDCEC)); //ActiveCaptionColor)); //0xCFDCEC));
 		BOOL_CHECK(BitBlt(hdc, 0, 0, TabsAreaWidth, TabTotalHeight, hdcPaint, 0, 0, SRCCOPY));
 
 		SelectObject(hdcPaint, hbmOld);
@@ -948,9 +1002,7 @@ void TabsManager::OnDrawMenuItem(HWND hwnd, const DRAWITEMSTRUCT* lpDrawItem)
 
 	BOOL_CHECK(DrawText(itemDC, itemData->shortcutText.c_str(), (int)itemData->shortcutText.size(), &rc, DT_RIGHT));
 
-
-	HDC compatDC;
-	BOOL_CHECK(compatDC = CreateCompatibleDC(itemDC));
+	HDC compatDC = CreateCompatibleDC(itemDC);
 	assert(compatDC != nullptr);
 
 	Gdiplus::Bitmap bitmap(SystemInfo::SmallIconX, SystemInfo::SmallIconY, PixelFormat32bppARGB);
@@ -960,7 +1012,7 @@ void TabsManager::OnDrawMenuItem(HWND hwnd, const DRAWITEMSTRUCT* lpDrawItem)
 
 	HBITMAP hbmp;
 	bitmap.GetHBITMAP(Gdiplus::Color::MakeARGB(0, 0xE8, 0xE8, 0xE8), &hbmp);
-	HBITMAP hbmOld = (HBITMAP)SelectObject(compatDC, hbmp);
+	SelectObject(compatDC, hbmp);
 
 	BOOL_CHECK(TransparentBlt(itemDC, nIconX, nIconY, SystemInfo::SmallIconX, SystemInfo::SmallIconY, compatDC, 0, 0, SystemInfo::SmallIconX, SystemInfo::SmallIconY, 0xE8E8E8));
 
@@ -1064,6 +1116,12 @@ LRESULT TabsManager::CaptionWndProc(HWND hWnd, UINT message, WPARAM wParam, LPAR
 	}
 	break;
 
+	case WM_SETFOCUS:
+	{
+		SelectedTab->SetFocus();
+	}
+	break;
+
 	case WM_ACTIVATE:
 	{
 		FWindowActive = LOWORD(wParam) != WA_INACTIVE;
@@ -1086,7 +1144,7 @@ LRESULT TabsManager::CaptionWndProc(HWND hWnd, UINT message, WPARAM wParam, LPAR
 	case WM_GETMINMAXINFO:
 	{
 		MINMAXINFO* mmInfo = (MINMAXINFO*)lParam;
-		mmInfo->ptMinTrackSize.x = Tabs.size()*TabMinWidth + TabAddBtnMarginLeft + TabAddBtnSizeX + TabMenuBtnMarginLeft + TabMenuBtnSizeX + 
+		mmInfo->ptMinTrackSize.x = (uint)Tabs.size()*TabMinWidth + TabAddBtnMarginLeft + TabAddBtnSizeX + TabMenuBtnMarginLeft + TabMenuBtnSizeX + 
 									3 * SystemInfo::CaptionButton.cx + 2 * SystemInfo::BorderSize.cx;
 		mmInfo->ptMinTrackSize.y = 200;
 		
@@ -1111,8 +1169,8 @@ LRESULT TabsManager::CaptionWndProc(HWND hWnd, UINT message, WPARAM wParam, LPAR
 			fCallDWP = false; // No need to pass the message on to the DefWindowProc.
 
 		}
-		break;
 	}
+	break;
 
 	// Handle hit testing in the NCA if not handled by DwmDefWindowProc.
 	case WM_NCHITTEST:
@@ -1190,45 +1248,69 @@ LRESULT TabsManager::OnWMCommand(HWND hWnd, int commandID, HWND controlHandle, U
 
 		auto itemData = (MAINMENUITEM*)getItemInfo.dwItemData;
 		SelectedTab->LoadFile(itemData->itemText);
-
-		break;
 	}
+	break;
+
 	case IDS_CLEARECENT:
 	{
 		auto access = Registry::DesiredAccess::Write | Registry::DesiredAccess::Read;
 		auto key = Registry::CurrentUser->Open(FStrMap[IDS_FULLREGKEYRECENT], access); // "SOFTWARE\\NotepadCo\\Notefall\\Recent"
 		key->Delete();
 	}
+	break;
 
+	case IDM_SETTINGS:
+	{ 
+		SettingsDlg settings;
+		settings.FontData = EditBoxFont;
+		settings.FontColor = EditBoxTextColor;
+		if (settings.ShowModal(FMainWnd))
+		{
+			EditBoxFont = settings.FontData;
+			EditBoxTextColor = settings.FontColor;
+			DeleteObject(EditBoxHFont);
+			EditBoxHFont = CreateFontIndirect(&EditBoxFont);
+			SelectedTab->SetFont(EditBoxHFont);
+		}
+		
 
-	//case IDM_EDITFONT:
-	//{
-	//	CHOOSEFONT font;
-	//	ZeroMemory(&font, sizeof(font));
-	//	font.lStructSize = sizeof(CHOOSEFONT);
-	//	font.hwndOwner = hWnd;
-	//	font.lpLogFont = &Globals::lfLogFont;
-	//	font.rgbColors = Globals::fcFontColor;
-	//	font.Flags = CF_SCREENFONTS | CF_EFFECTS;
+		//HWND hDlg = CreateDialogParam(FInstance, MAKEINTRESOURCE(IDD_DIALOGSETTINGS), FMainWnd, SettingsDlgWndProcStatic, (LPARAM)this);
+		//ShowWindow(hDlg, SW_SHOW);
 
-	//	//HFONT hfont = (HFONT)SendMessage(g_hWndEdit, WM_GETFONT, 0, 0);
+		/*
+		CHOOSEFONT font{};
+		//ZeroMemory(&font, sizeof(font));
+		font.lStructSize = sizeof(CHOOSEFONT);
+		font.hwndOwner = hWnd;
+		font.lpLogFont = &EditBoxFont;
+		font.rgbColors = EditBoxTextColor;
+		font.Flags = CF_SCREENFONTS | CF_EFFECTS;
 
-	//	if (ChooseFont(&font) == TRUE)
-	//	{
-	//		HDC hdc = GetDC(g_hWndEdit);
-	//		HFONT hfont = CreateFontIndirect(font.lpLogFont);
-	//		SendMessage(g_hWndEdit, WM_SETFONT, (WPARAM)hfont, TRUE);
-	//		Globals::fcFontColor = font.rgbColors;
+		if (ChooseFont(&font) == TRUE)
+		{ 
+			HFONT oldHFont = EditBoxHFont;
+			EditBoxHFont = CreateFontIndirect(&EditBoxFont);
 
-	//		COLORREF prevColor = SetTextColor(hdc, font.rgbColors);
-	//		if (prevColor == CLR_INVALID)
-	//			MessageBox(hWnd, _T("this is text"), _T("this is caption"), MB_OK);
-	//		//HFONT hfontPrev = SelectObject(hdc, hfont);
-	//		//rgbCurrent = cf.rgbColors;
-	//		//rgbPrev = SetTextColor(hdc, rgbCurrent);
-	//	}
-	//	break;
-	//}
+			SelectedTab->SetFont(EditBoxHFont);
+
+		//	DeleteObject(oldHFont);	
+		//	
+		//	HDC hdc = GetDC(FEditWnd);
+		//	HFONT hfont = CreateFontIndirect(font.lpLogFont);
+		//	SendMessage(g_hWndEdit, WM_SETFONT, (WPARAM)hfont, TRUE);
+		//	Globals::fcFontColor = font.rgbColors;
+
+		//	COLORREF prevColor = SetTextColor(hdc, font.rgbColors);
+		//	if (prevColor == CLR_INVALID)
+		//		MessageBox(hWnd, _T("this is text"), _T("this is caption"), MB_OK);
+		//	
+		//	//HFONT hfontPrev = SelectObject(hdc, hfont);
+		//	//rgbCurrent = cf.rgbColors;
+		//	//rgbPrev = SetTextColor(hdc, rgbCurrent);
+		}*/
+	}
+	break;
+
 	default:
 		return DefWindowProc(hWnd, WM_COMMAND, MAKEWPARAM(commandID, code), (LPARAM)controlHandle);
 	}

@@ -1,9 +1,8 @@
 // Notepad.cpp : Defines the entry point for the application.
 //
 
+#include "framework.h"
 #include "Notefall.h"
-#include "SystemInfo.h"
-#include "TabsManager.h"
 #include "Application.h"
 
 #include <commdlg.h>
@@ -19,7 +18,7 @@
 // * сохранение истории поисков и replaces в реестре - DONE
 // * replace - сделать поддержку окна не модальным?
 // * Zoom изменять через GUI в status bar
-// * реализовать Settings screen с настройками фонта для начала
+// * реализовать Settings screen с настройками фонта для начала - DONE
 // * реализовать print ф-цию.
 // word wrap опцию
 
@@ -71,15 +70,16 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	//_CrtMemState s1, s2, s3;
 	//_CrtMemCheckpoint(&s1);
 
-	LOG_INFO(std::string(APP_LOG_NAME).append(" - ").append("Start"));
+	LOG_INFO(""); // write empty line to log file on app start
+	LOG_INFO(std::string(APP_LOG_NAME).append(" - ").append("START"));
 
 	int retCode = 0;
 
 	{
 		GdiPlusInit gdip;
 
-		//BOOL act = IsThemeActive();
-		//BOOL appth = IsAppThemed();
+		if (IsThemeActive()) LOG_INFO("IsThemeActive = TRUE");
+		if(IsAppThemed())    LOG_INFO("IsAppThemed = TRUE");
 
 		Application theApp(hInstance, lpCmdLine, nCmdShow);
 		try
@@ -102,11 +102,11 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	//_CrtMemCheckpoint(&s2);
 	//if (_CrtMemDifference(&s3, &s1, &s2))
 	//	_CrtMemDumpStatistics(&s3);
+	//int* aaa = new int[100];
+
+	LOG_INFO(std::string(APP_LOG_NAME).append(" - ").append("FINISH"));
 
 	_CrtDumpMemoryLeaks();
-
-
-	LOG_INFO(std::string(APP_LOG_NAME).append(" - ").append("Finish"));
 
 	return retCode;
 }

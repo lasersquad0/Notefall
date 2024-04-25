@@ -10,6 +10,10 @@ class ITab;
 
 class TabContent
 {
+private: // static fields
+    static ATOM RegisterBaseWindowClass();
+    inline static const ATOM FBaseWndClass = RegisterBaseWindowClass();
+
 private:
     TabsManager* FTabsMan{};
     ITab* FParent{};
@@ -27,14 +31,14 @@ private:
     std::vector<string_t> FFindHistory;
     std::vector<string_t> FReplaceHistory;
 
-    ATOM RegisterBaseWindowClass();
+    
     void LoadStrings();
     BOOL InitStatusBar();
     void UpdateStatusBar();
     void UpdateRecent();
     void UpdateFindHistory();
     void UpdateReplaceHistory();
-    HFONT CreateFontForEdit();
+    //HFONT CreateFontForEdit();
     void LoadFindHistory();
     void LoadReplaceHistory();
 
@@ -58,6 +62,9 @@ public:
     //void Init();
     void SetVisible(bool visible);
     bool IsVisible() { return IsWindowVisible(FEditBoxWnd); }
+    void SetFocus() { ::SetFocus(FEditBoxWnd); }
+    void SetFont(HFONT font);
+
     bool IsModified() { return Edit_GetModify(FEditBoxWnd); }
     void SetModified(bool modified) { Edit_SetModify(FEditBoxWnd, modified); }
     

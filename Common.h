@@ -79,10 +79,12 @@ typedef std::basic_string<wchar_t, ci_char_traits<wchar_t>> ci_wstring;
 typedef ci_wstring ci_string;
 typedef std::wstring string_t;
 typedef std::wstringstream stringstream_t;
+#define to_string_t std::to_wstring
 #else
 typedef ci_astring ci_string;
 typedef std::string string_t;
 typedef std::stringstream stringstream_t;
+#define to_string_t std::to_string
 #endif
 
 struct MyGroupSeparator : std::numpunct<TCHAR>

@@ -57,6 +57,9 @@ private:
 	RECT GetMenuBtnRect();
 	static HFONT CreateFontForShortcut();
 	LOGFONT CreateFontForShortcut1();
+	static LOGFONT CreateFontForEdit();
+	static HFONT CreateHFontForEdit();
+
 	void RedrawTabsIfOver(POINT ptMouse);
 	bool IsOverAddButton(POINT ptMouse);
 	bool IsOverMenuBtn(POINT ptMouse);
@@ -146,5 +149,21 @@ public:
 	inline static HBRUSH MainMenuBackgroundBrush;
 	inline static HFONT MainMenuShortcutFont = CreateFontForShortcut();
 
+	inline static COLORREF ActiveCaptionColor;
+	//inline static COLORREF InactiveCaptionColor;
+	inline static COLORREF WindowColor;
+	inline static COLORREF CaptionTextColor;
+	//inline static COLORREF InactiveCaptionTextColor;
+	//inline static HBRUSH CaptionBackgroundBrush;
+	//inline static COLORREF CaptionColor(bool active) { return active ? ActiveCaptionColor : InactiveCaptionColor; }
+	inline static LOGFONT EditBoxFont = CreateFontForEdit();
+	inline static HFONT EditBoxHFont = CreateHFontForEdit();
+	inline static COLORREF EditBoxTextColor = RGB(0, 0, 0);
+
+	inline static COLORREF ComboItemTextColor;
+	inline static COLORREF ComboItemHighlightColor;  
+	inline static COLORREF ComboItemNormalColor; // bkg color of entire popup menu
+	inline static COLORREF ComboItemDisabledColor;
+	inline static HBRUSH FontPreviewBrush;
 };
 

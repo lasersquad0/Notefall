@@ -161,7 +161,7 @@ HFONT CreateFontPlus1(HDC dc)
 	StringCchCopy(lf.lfFaceName, lstrlen(buf), buf);
 
 	lf.lfWeight    = metric.tmWeight;// FW_NORMAL;
-	lf.lfHeight    = metric.tmHeight + 1;
+	lf.lfHeight = metric.tmHeight + 1;// +(metric.tmHeight > 0) ? 1 : -1;
 	lf.lfUnderline = metric.tmUnderlined;
 	lf.lfStrikeOut = metric.tmStruckOut;
 	lf.lfItalic    = metric.tmItalic;

@@ -49,6 +49,8 @@ void TabContent::LoadStrings()
 
 }
 
+#define BASEWND_ID _T("BaseWnd")
+
 ATOM TabContent::RegisterBaseWindowClass()
 {
 	WNDCLASSEX wcex{};
@@ -58,12 +60,12 @@ ATOM TabContent::RegisterBaseWindowClass()
 	wcex.lpfnWndProc = BaseWndProcStatic;
 	wcex.cbClsExtra = 0;
 	wcex.cbWndExtra = 0;
-	wcex.hInstance = FInstance;
+	wcex.hInstance = GetModuleHandle(nullptr); //FInstance
 	//wcex.hIcon = LoadIcon(FInstance, MAKEINTRESOURCE(IDI_NOTEFALL));
 	wcex.hCursor = LoadCursor(nullptr, IDC_ARROW);
 	wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
 	//wcex.lpszMenuName = nullptr; //MAKEINTRESOURCE(IDC_NOTEFALL);
-	wcex.lpszClassName = _T("BaseWnd");
+	wcex.lpszClassName = BASEWND_ID;
 	//wcex.hIconSm = LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
 
 	return RegisterClassEx(&wcex);
@@ -76,13 +78,13 @@ TabContent::TabContent(TabsManager* tabsMan, ITab* parent)
 	FInstance = FTabsMan->GetInstance();
 	
 	LoadStrings();
-	RegisterBaseWindowClass();
+	//BOOL_CHECK(RegisterBaseWindowClass());
 
 	HWND mainWnd = FTabsMan->GetMainWnd();
 
 	RECT rcBase = GetBaseWndRect();
 
-	FBaseWnd = CreateWindowEx(0, _T("BaseWnd"), _T("basewnd"), WS_CHILD | WS_CLIPCHILDREN, // | WS_BORDER,
+	FBaseWnd = CreateWindowEx(0, BASEWND_ID, _T("NotefallBaseWindowName"), WS_CHILD | WS_CLIPCHILDREN, // | WS_BORDER,
 							rcBase.left, rcBase.top, RECTW(rcBase), RECTH(rcBase), mainWnd, nullptr, FInstance, nullptr);
 	if (!FBaseWnd)
 	{
@@ -95,12 +97,12 @@ TabContent::TabContent(TabsManager* tabsMan, ITab* parent)
 	RECT rc2;
 	BOOL_CHECK(GetClientRect(FBaseWnd, &rc2));
 
-	FEditBoxWnd = CreateWindowEx(0, WC_EDIT, _T("NotefallTabContentWindow"),
+	FEditBoxWnd = CreateWindowEx(0, WC_EDIT, _T("NotefallContentWindowName"),
 		WS_CHILD | WS_VISIBLE | WS_VSCROLL | WS_HSCROLL | ES_LEFT | ES_MULTILINE | ES_NOHIDESEL, // | ES_AUTOVSCROLL, //| ES_AUTOHSCROLL | WS_CLIPCHILDREN, // | WS_BORDER,
 		rc2.left , rc2.top, rc2.right, rc2.bottom, FBaseWnd, (HMENU)ID_EDITBOXWND, FInstance, nullptr);
 	
-	Edit_SetExtendedStyle(FEditBoxWnd, ES_EX_ZOOMABLE, ES_EX_ZOOMABLE);
-	SendMessage(FEditBoxWnd, WM_SETFONT, (WPARAM)CreateFontForEdit(), (LPARAM)1);
+	Edit_SetExtendedStyle(FEditBoxWnd, ES_EX_ZOOMABLE | ES_EX_ALLOWEOL_ALL, ES_EX_ZOOMABLE | ES_EX_ALLOWEOL_ALL);
+	SendMessage(FEditBoxWnd, WM_SETFONT, (WPARAM)TabsManager::EditBoxHFont, (LPARAM)1);
 	long long enu = 1, denu = 1;	
 	Edit_GetZoom(FEditBoxWnd, &enu, &denu);
 
@@ -109,7 +111,8 @@ TabContent::TabContent(TabsManager* tabsMan, ITab* parent)
 	SendMessage(FEditBoxWnd, WM_SETTEXT, 0, (LPARAM)(EDITBOXTEXT));
 
 	FOldEditBoxWndProc = (WNDPROC)SetWindowLongPtr(FEditBoxWnd, GWLP_WNDPROC, (LONG_PTR)&EditBoxWndProcStatic);
-	if (!FOldEditBoxWndProc) DisplayError(FEditBoxWnd, _T("SetWindowLongPtr"));
+	if (!FOldEditBoxWndProc) 
+		DisplayError(FEditBoxWnd, _T("SetWindowLongPtr"));
 	SetWindowLongPtr(FEditBoxWnd, GWLP_USERDATA, (LONG_PTR)this);
 
 	//register message for Find dialog
@@ -122,7 +125,6 @@ TabContent::TabContent(TabsManager* tabsMan, ITab* parent)
 
 TabContent::~TabContent()
 {
-	// DO NOT need to destroy window here because they are already destroyed when main windows is destroyed.
 	BOOL_CHECK(DestroyWindow(FStatusBarWnd));
 	BOOL_CHECK(DestroyWindow(FEditBoxWnd));
 	BOOL_CHECK(DestroyWindow(FBaseWnd));
@@ -166,45 +168,38 @@ void TabContent::UpdateStatusBar()
 	UINT num = 0, denum = 0;
 	Edit_GetZoom(FEditBoxWnd, &num, &denum);
 	//UINT zoom = (UINT)(100.0 * (double)(num) / (double)denum);
-	DWORD len = (DWORD)SendMessage(FEditBoxWnd, WM_GETTEXTLENGTH, 0, 0);
-	DWORD lines = (DWORD)SendMessage(FEditBoxWnd, EM_GETLINECOUNT, 0, 0);
-	BOOL modified = (BOOL)SendMessage(FEditBoxWnd, EM_GETMODIFY, 0, 0);
 	
-	const DWORD BUF_SZ = 25;
+	DWORD textLen = (DWORD)SendMessage(FEditBoxWnd, WM_GETTEXTLENGTH, 0, 0);
+	//DWORD lines = (DWORD)SendMessage(FEditBoxWnd, EM_GETLINECOUNT, 0, 0);
+	BOOL modified = (BOOL)SendMessage(FEditBoxWnd, EM_GETMODIFY, 0, 0);
+	//DWORD currentLine = Edit_LineFromChar(FEditBoxWnd, -1);
+	
+	DWORD bsel, esel;
+	SendMessage(FEditBoxWnd, EM_GETSEL, WPARAM(&bsel), LPARAM(&esel));
+	assert(bsel <= esel);
+	DWORD line = (DWORD)SendMessage(FEditBoxWnd, EM_LINEFROMCHAR, WPARAM(bsel), 0);
+	DWORD firstChar = (DWORD)SendMessage(FEditBoxWnd, EM_LINEINDEX, WPARAM(line), 0);
+	DWORD charIndex = bsel;
+	DWORD col = charIndex - firstChar;
+
+	assert(charIndex >= firstChar);
+
+	const DWORD BUF_SZ = 100;
 	TCHAR buf[BUF_SZ];
 	StringCchPrintf(buf, BUF_SZ, (_T("Zoom: ") + SizeToStr(num) + _T("/") + SizeToStr(denum)).c_str());
 	SendMessage(FStatusBarWnd, SB_SETTEXT, 1 | SBT_POPOUT, (LPARAM)buf);
 
-	StringCchPrintf(buf, BUF_SZ, (_T("Size: ") + SizeToStr(len)).c_str());
+	StringCchPrintf(buf, BUF_SZ, (_T("LN:") + toStringSep(line) + _T(" CL:") + toStringSep(col) + _T(" CH:") + toStringSep(charIndex)).c_str());
 	SendMessage(FStatusBarWnd, SB_SETTEXT, 2 | SBT_POPOUT, (LPARAM)buf);
-	
-	StringCchPrintf(buf, BUF_SZ, (_T("Lines: ") + toStringSep(lines)).c_str());
+
+	StringCchPrintf(buf, BUF_SZ, (_T("SZ: ") + SizeToStr(textLen) + _T(" characters")).c_str());
 	SendMessage(FStatusBarWnd, SB_SETTEXT, 3 | SBT_POPOUT, (LPARAM)buf);
+	
 	
 	if (modified)
 		SendMessage(FStatusBarWnd, SB_SETTEXT, 0 | SBT_POPOUT, (LPARAM)FStrMap[IDS_STATUSMODIFIED].c_str()); //_T("Status: Modified"));
 	else
 		SendMessage(FStatusBarWnd, SB_SETTEXT, 0 | SBT_POPOUT, (LPARAM)FStrMap[IDS_STATUSNOTMOD].c_str()); // _T("Status: Not modified"));
-}
-
-HFONT TabContent::CreateFontForEdit()
-{
-	LOGFONT lf{};
-
-	TCHAR fname[] = _T("Consolas");
-	StringCchCopy(lf.lfFaceName, lstrlen(fname), fname);
-
-	lf.lfWeight = FW_MEDIUM;
-	lf.lfHeight = 20;
-	lf.lfWidth = 6;
-	lf.lfQuality = CLEARTYPE_QUALITY;
-	lf.lfCharSet = 204;
-	lf.lfPitchAndFamily = 33;
-
-	// Create the font, and then return its handle.  
-	return CreateFont(lf.lfHeight, lf.lfWidth, lf.lfEscapement, lf.lfOrientation, lf.lfWeight,
-		lf.lfItalic, lf.lfUnderline, lf.lfStrikeOut, lf.lfCharSet, lf.lfOutPrecision,
-		lf.lfClipPrecision, lf.lfQuality, lf.lfPitchAndFamily, lf.lfFaceName);
 }
 
 void TabContent::AddText(const string_t& text)
@@ -223,9 +218,15 @@ RECT TabContent::GetBaseWndRect()
 void TabContent::SetVisible(bool visible)
 {
 	if (visible)
-		ShowWindow(FBaseWnd, SW_SHOW);
+		ShowWindow(FBaseWnd, SW_SHOW), ::SetFocus(FEditBoxWnd);
 	else
 		ShowWindow(FBaseWnd, SW_HIDE);
+}
+
+void TabContent::SetFont(HFONT font)
+{
+	SendMessage(FEditBoxWnd, WM_SETFONT, (WPARAM)font, TRUE);
+
 }
 
 void TabContent::Resize()
@@ -249,7 +250,6 @@ void TabContent::EditWndResize(HWND hWnd, UINT, int cx, int cy)
 	GetTextExtentPoint32(DC, part3.c_str(), (int)part3.size(), &sz3);
 
 	BOOL_CHECK(ReleaseDC(FStatusBarWnd, DC));
-
 
 	int nHalf = (cx - sz2.cx - sz3.cx) / 2;
 	int nParts[] = { nHalf, 2 * nHalf, 2 * nHalf + sz2.cx, -1 };
@@ -311,23 +311,25 @@ LRESULT CALLBACK TabContent::BaseWndProc(HWND hWnd, UINT message, WPARAM wParam,
 		DestroyMenu(menu);
 		break;
 	}
+
+	
 	
 /*	case WM_ERASEBKGND: // disable Erase Background
 		return 0;
-
+*/
 	case WM_CTLCOLOREDIT:
 	{
 		//static HBRUSH hbrushEditBox = nullptr;
 		HDC hdcEdit = (HDC)wParam;
-		//SetTextColor(hdcEdit, Globals::fcFontColor); // Text color
-		SetBkMode(hdcEdit, OPAQUE); // EditBox Backround Mode (note: OPAQUE can be used)
-		SetBkColor(hdcEdit, GetSysColor(COLOR_BTNFACE)); //(LONG)hbrushEditBox); // Backround color for EditBox
+		SetTextColor(hdcEdit, TabsManager::EditBoxTextColor); // Text color
+		//SetBkMode(hdcEdit, OPAQUE); // EditBox Backround Mode (note: OPAQUE can be used)
+		//SetBkColor(hdcEdit, GetSysColor(COLOR_BTNFACE)); //(LONG)hbrushEditBox); // Backround color for EditBox
 
 		//DeleteObject(hbrushEditBox);
 		//hbrushEditBox = CreateSolidBrush(COLOR_WINDOW+1);
-		return (LRESULT)GetSysColorBrush(COLOR_WINDOW); //hbrushEditBox; // Paint it
+		return (LRESULT)TabsManager::FontPreviewBrush; //GetSysColorBrush(COLOR_WINDOW); //hbrushEditBox; // Paint it
 	}
-	*/
+	
 
 	default:
 		return DefWindowProc(hWnd, message, wParam, lParam);
@@ -825,6 +827,22 @@ LRESULT CALLBACK TabContent::EditBoxWndProc(HWND hWnd, UINT message, WPARAM wPar
 		return DefWindowProc(hWnd, message, wParam, lParam);
 	}
 
+	case WM_LBUTTONDOWN:
+	case WM_LBUTTONUP:
+	case WM_LBUTTONDBLCLK:
+	case WM_RBUTTONDOWN:
+	case WM_RBUTTONUP:
+	case WM_RBUTTONDBLCLK:
+	case WM_MBUTTONDOWN:
+	case WM_MBUTTONUP:
+	case WM_MBUTTONDBLCLK:
+	case WM_KEYUP:
+	{
+		UpdateStatusBar();
+		return CallWindowProc(FOldEditBoxWndProc, hWnd, message, wParam, lParam);
+	}
+
+
 	default:
 		return CallWindowProc(FOldEditBoxWndProc, hWnd, message, wParam, lParam);
 	}
@@ -842,7 +860,7 @@ LRESULT TabContent::OnWMCommand(HWND hWnd, int commandID, HWND controlHandle, UI
 LRESULT TabContent::WMCommand(int commandID, HWND controlHandle, UINT code)
 {
 	UNREFERENCED_PARAMETER(controlHandle);
-	UNREFERENCED_PARAMETER(code);
+	//UNREFERENCED_PARAMETER(code);
 
 	switch (commandID)
 	{
@@ -859,7 +877,7 @@ LRESULT TabContent::WMCommand(int commandID, HWND controlHandle, UINT code)
 	case IDM_SELECTALL: PostMessage(FEditBoxWnd, EM_SETSEL, 0, (LPARAM)-1); break;
 	case ID_EDITBOXWND: // notification from Editbox
 		if (code == EN_UPDATE) UpdateStatusBar(); // updating status bar if text has changed
-
+		//if (code == EN_CHANGE) UpdateStatusBar(); 
 		break;
 	default: return 1;
 	}
